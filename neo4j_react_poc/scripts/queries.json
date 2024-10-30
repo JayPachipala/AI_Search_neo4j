@@ -1,0 +1,78 @@
+{
+    "top_vendors": {
+        "keywords": ["top", "vendors", "total spending"],
+        "query": "MATCH (p:Payee)<-[:PAID_TO]-(c:Contract) RETURN p.name AS vendor_name, SUM(c.check_amount) AS total_spending ORDER BY total_spending DESC LIMIT 5;"
+    },
+    "top_departments": {
+        "keywords": ["top", "departments", "total spending"],
+        "query": "MATCH (d:Department)-[:MANAGED_BY]-(c:Contract) RETURN d.name AS department_name, SUM(c.check_amount) AS total_spending ORDER BY total_spending DESC LIMIT 5;"
+    },
+    "top_contracts": {
+        "keywords": ["top", "contracts", "total spending"],
+        "query": "MATCH (c:Contract) RETURN c.contract_id AS contract_id, SUM(c.check_amount) AS total_spending ORDER BY total_spending DESC LIMIT 5;"
+    },
+    "top_vendors_by_spending": {
+        "keywords": ["top vendors", "highest spending", "vendors", "most money spent", "largest payments"],
+        "query": "MATCH (p:Payee)<-[:PAID_TO]-(c:Contract) RETURN p.name AS vendor_name, SUM(c.check_amount) AS total_spending ORDER BY total_spending DESC LIMIT 5;"
+    },
+    "departments_with_highest_spending": {
+        "keywords": ["top departments", "highest spending departments", "departments with most spending", "largest department budgets"],
+        "query": "MATCH (d:Department)-[:MANAGED_BY]->(c:Contract) RETURN d.name AS department_name, SUM(c.check_amount) AS total_spending ORDER BY total_spending DESC LIMIT 5;"
+    },
+    "top_expense_categories": {
+        "keywords": ["top expense categories", "highest spending by category", "expense categories with most spending", "largest expenses"],
+        "query": "MATCH (c:Contract)-[:IN_CATEGORY]->(ec:ExpenseCategory) RETURN ec.category AS expense_category, SUM(c.check_amount) AS total_spending ORDER BY total_spending DESC LIMIT 5;"
+    },
+    "total_contract_spending": {
+        "keywords": ["total contract spending", "overall spending on contracts", "total amount spent on contracts", "sum of all contracts"],
+        "query": "MATCH (c:Contract) RETURN SUM(c.check_amount) AS total_contract_spending;"
+    },
+    "agency_spending_breakdown": {
+        "keywords": ["agency spending breakdown", "total spending per agency", "agency-wise spending", "spending by each agency"],
+        "query": "MATCH (a:Agency)-[:HAS_CONTRACT]->(c:Contract) RETURN a.name AS agency_name, SUM(c.check_amount) AS total_spending ORDER BY total_spending DESC;"
+    },
+    "contracts_with_multiple_agencies": {
+        "keywords": ["contracts across multiple agencies", "shared contracts", "contracts linked to more than one agency", "vendors with contracts in multiple agencies"],
+        "query": "MATCH (a:Agency)-[:HAS_CONTRACT]->(c:Contract)-[:PAID_TO]->(p:Payee) WITH p, COUNT(DISTINCT a) AS agency_count, COLLECT(c.contract_id) AS contract_ids WHERE agency_count > 1 RETURN p.name AS vendor_name, agency_count, contract_ids;"
+    },
+    "yearly_spending_trends": {
+        "keywords": ["spending trends by year", "yearly spending breakdown", "how much spent per year", "annual spending totals"],
+        "query": "MATCH (c:Contract) RETURN c.fiscal_year AS year, SUM(c.check_amount) AS total_spending ORDER BY year DESC;"
+    },
+    "woman_owned_business_spending": {
+        "keywords": ["spending on woman-owned businesses", "contracts with woman-owned vendors", "woman-owned business spending", "support for women in business"],
+        "query": "MATCH (p:Payee {woman_owned: true})-[:PAID_TO]->(c:Contract) RETURN p.name AS vendor_name, COUNT(c) AS contract_count, SUM(c.check_amount) AS total_spending ORDER BY total_spending DESC;"
+    },
+    "agency_spending_trends": {
+        "keywords": ["agency spending trends over years", "yearly spending by agency", "spending patterns by agency", "agency spending breakdown over time"],
+        "query": "MATCH (a:Agency)-[:HAS_CONTRACT]->(c:Contract) RETURN a.name AS agency_name, c.fiscal_year AS year, SUM(c.check_amount) AS total_spending ORDER BY a.name, year DESC;"
+    },
+    "highest_budget_code_spending": {
+        "keywords": ["highest spending by budget code", "top budget codes", "biggest budget allocations", "most money spent in budget codes"],
+        "query": "MATCH (c:Contract)-[:UNDER_BUDGET]->(b:BudgetCode) RETURN b.code AS budget_code, b.description AS description, SUM(c.check_amount) AS total_spending ORDER BY total_spending DESC LIMIT 5;"
+    },
+    "industry_breakdown_by_agency": {
+        "keywords": ["industry spending by agency", "agency spending in different industries", "industry breakdown per agency", "distribution of spending by industry"],
+        "query": "MATCH (a:Agency)-[:HAS_CONTRACT]->(c:Contract)-[:BELONGS_TO_INDUSTRY]->(i:Industry) RETURN a.name AS agency_name, i.name AS industry, COUNT(c) AS contract_count ORDER BY contract_count DESC;"
+    },
+    "minority_business_spending": {
+        "keywords": ["spending on minority businesses", "MWBE spending", "support for minority vendors", "contracts with MWBE businesses"],
+        "query": "MATCH (p:Payee)-[:PAID_TO]->(c:Contract) WHERE p.mwbe_category IS NOT NULL RETURN p.mwbe_category AS diversity_category, COUNT(c) AS contract_count, SUM(c.check_amount) AS total_spending ORDER BY total_spending DESC;"
+    },
+    "largest_subvendors": {
+        "keywords": ["largest subvendors by spending", "top subvendors", "subvendors with most contracts", "biggest subvendor payments"],
+        "query": "MATCH (sv:SubVendor)<-[:HAS_SUBVENDOR]-(p:Payee)-[:PAID_TO]->(c:Contract) RETURN sv.name AS subvendor_name, SUM(c.check_amount) AS total_spending ORDER BY total_spending DESC LIMIT 5;"
+    },
+    "spending_on_child_services": {
+        "keywords": ["spending on child services", "contracts for children's services", "agency spending for child welfare", "budget for children's services"],
+        "query": "MATCH (a:Agency {name: 'Administration for Children’s Services'})-[:HAS_CONTRACT]->(c:Contract) RETURN c.contract_id AS contract_id, c.purpose AS purpose, c.check_amount AS check_amount;"
+    },
+    "top_industries_by_spending": {
+        "keywords": ["top industries by spending", "highest spending industries", "industries with most contracts", "industry spending distribution"],
+        "query": "MATCH (c:Contract)-[:BELONGS_TO_INDUSTRY]->(i:Industry) RETURN i.name AS industry, SUM(c.check_amount) AS total_spending ORDER BY total_spending DESC LIMIT 5;"
+    },
+    "expense_category_analysis": {
+        "keywords": ["expense category analysis", "spending per category", "breakdown by expense category", "top spending categories"],
+        "query": "MATCH (c:Contract)-[:IN_CATEGORY]->(ec:ExpenseCategory) RETURN ec.category AS expense_category, COUNT(c) AS contract_count, SUM(c.check_amount) AS total_spending ORDER BY total_spending DESC;"
+    }
+}

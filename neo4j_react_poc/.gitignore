@@ -1,0 +1,18 @@
+# Ignore Python virtual environments
+.venv/
+
+# Ignore credentials folder
+credentials/
+
+# Ignore data folder
+data/
+
+# Ignore import folder
+import/nyc_spending_feed_checks_11to12k.csv
+
+# Ignore Neo4j files
+neo4v/
+
+# Ignore scripts files
+scripts/app_llm.ipynb
+scripts/app_with_llm.py
