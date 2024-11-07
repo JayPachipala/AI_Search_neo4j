@@ -71,16 +71,51 @@ async def generate_query(request: QueryRequest):
     {schema}
 
     Please generate Cypher queries based on the schema.
-    Example question:
-    what is total spending by Agency
+    Example Question:
+    What is total spending by Agency?
 
+    Query Output:
     MATCH (a:Agency)-[:HAS_CONTRACT]->(c:Contract)
-    MATCH (c)-[:PAID_TO]->(p:Payee)
-    RETURN a.name AS agency_name, SUM(c.check_amount) AS total_spending
+    RETURN a.name AS agency_name, ROUND(SUM(c.check_amount)) AS total_spending
+    ORDER BY total_spending DESC
+    LIMIT 5;
+
+    Example Question:
+    Who are the top 5 vendors by total spending?
+
+    Query Output:
+    MATCH (p:Payee)<-[:PAID_TO]-(c:Contract)
+    RETURN p.name AS vendor_name, ROUND(SUM(c.check_amount)) AS total_spending
     ORDER BY total_spending DESC
     LIMIT 5;     
 
-    Only generate the Cypher query as response.
+    Example Question:
+    Which departments have the highest average spending per contract?
+
+    Query Output:
+    MATCH (d:Department)<-[:MANAGED_BY]-(c:Contract)
+    RETURN d.name AS department, ROUND(AVG(c.check_amount)) AS average_spending
+    ORDER BY average_spending DESC
+    LIMIT 5;
+
+    Example Question:
+    What is the total spending for year 2021?
+
+    Query Output:
+    MATCH (c:Contract)
+    WHERE c.fiscal_year = 2021
+    RETURN ROUND(SUM(c.check_amount)) AS total_spending;
+
+    Example Question:
+    What is the spending by a specific Agency, such as Department of Education, in 2021?
+
+    Query Output:
+    MATCH (a:Agency)-[:HAS_CONTRACT]->(c:Contract)
+    WHERE a.name = 'Department of Education' AND c.fiscal_year = 2021
+    RETURN ROUND(SUM(c.check_amount)) AS total_spending;
+
+    
+    Do not generate queriy with GROUP BY in it.Only generate the Cypher query as response.
     """
 
     # Create a schema message and user query
