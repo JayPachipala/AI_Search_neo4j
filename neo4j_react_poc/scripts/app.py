@@ -107,11 +107,11 @@ async def generate_query(request: QueryRequest):
     RETURN ROUND(SUM(c.check_amount)) AS total_spending;
 
     Example Question:
-    What is the spending by a specific Agency, such as Department of Education, in 2021?
+    What is the spending by a specific Agency, such as Department of Education, in 2023?
 
     Query Output:
     MATCH (a:Agency)-[:HAS_CONTRACT]->(c:Contract)
-    WHERE a.name = 'Department of Education' AND c.fiscal_year = 2021
+    WHERE a.name = 'Department of Education' AND c.fiscal_year = 2023
     RETURN ROUND(SUM(c.check_amount)) AS total_spending;
 
     
